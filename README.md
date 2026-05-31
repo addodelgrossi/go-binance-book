@@ -34,6 +34,15 @@ O arquivo de contexto guarda as decisões principais, estado atual, limitações
 - Metadados KDP: `kdp/metadados-kdp.md`
 - Código compactado: `dist/codigo-robo-go-binance.zip`
 
+## Decisão editorial para o primeiro upload
+
+- Autor: Addo Del Grossi.
+- Formato KDP: Kindle eBook com upload direto do EPUB.
+- Marketplace primário: Amazon Brasil.
+- KDP Select: não inscrever no lançamento inicial.
+- Preço inicial sugerido: R$ 9,90.
+- Disclosure de IA: marcar texto e capa como conteúdo gerado por IA se publicar esta versão como está.
+
 ## Validar o código Go
 
 ```bash

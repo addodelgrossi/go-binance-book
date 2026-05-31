@@ -5,6 +5,12 @@ Projeto educativo que acompanha o livro **Robos de Trade com Go e Binance para I
 Este codigo usa somente a Binance Spot Testnet. Ele nao e recomendacao financeira,
 nao promete lucro e nao deve ser usado com dinheiro real sem uma revisao completa.
 
+## Licenca
+
+O codigo de exemplo deste diretorio usa a licenca MIT. O texto do livro,
+a capa e os demais materiais editoriais do projeto permanecem com todos
+os direitos reservados ao autor.
+
 ## Requisitos
 
 - Go 1.26.x

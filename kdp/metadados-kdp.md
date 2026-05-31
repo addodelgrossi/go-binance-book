@@ -10,7 +10,7 @@ Um guia prático, simples e educativo para criar seu primeiro bot na Spot Testne
 
 ## Autor
 
-[Nome do Autor]
+Addo Del Grossi
 
 ## Descrição curta
 
@@ -44,9 +44,24 @@ Ideal para quem quer aprender o básico de Go, APIs, robôs de trade e empacotam
 - Business & Money / Investing / Online Trading
 - Computers & Technology / Software Development
 
+## Configuração de publicação sugerida
+
+- Formato: Kindle eBook.
+- Marketplace primário: Amazon Brasil.
+- Manuscrito: `dist/robo-trade-go-binance.epub`.
+- Capa: `assets/capa-robo-trade-go-binance.jpg`.
+- Direitos de publicação: obra própria, não domínio público.
+- Territórios: todos os territórios, se você detém esses direitos.
+- KDP Select: não inscrever no primeiro lançamento.
+- Royalty: 35% para o lançamento sem KDP Select no Brasil.
+- Preço inicial sugerido: R$ 9,90.
+- Público: adulto/geral, não infantil.
+- Conteúdo sexualmente explícito: não.
+- ISBN: não necessário para Kindle eBook.
+
 ## Nota de transparência sobre IA
 
-Se este manuscrito, a capa ou partes substanciais deles forem usados como gerados por IA, marque o disclosure de conteúdo gerado por IA no KDP. Se houver revisão humana substancial, reescrita, validação técnica e autoria editorial própria, avalie a diferença entre conteúdo AI-generated e AI-assisted conforme a política vigente do KDP.
+Para publicar esta versão como está, marque no KDP o disclosure de conteúdo gerado por IA para texto e imagem de capa. Tradução: não aplicável. Se houver reescrita humana substancial e recriação própria da capa antes da publicação, reavalie a diferença entre AI-generated e AI-assisted conforme a política vigente do KDP.
 
 ## Checklist de upload
 
@@ -57,6 +72,7 @@ Se este manuscrito, a capa ou partes substanciais deles forem usados como gerado
 - Subir a capa JPG separadamente.
 - Revisar descrição e palavras-chave.
 - Confirmar que não há promessa financeira.
-- Confirmar disclosure de IA quando aplicável.
+- Confirmar disclosure de IA para texto e capa se publicar esta versão como está.
+- Confirmar que KDP Select está desmarcado.
+- Confirmar preço inicial de R$ 9,90 ou ajustar conscientemente.
 - Fazer preview final no KDP antes de publicar.
-

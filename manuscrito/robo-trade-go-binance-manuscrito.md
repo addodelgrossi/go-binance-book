@@ -2,11 +2,23 @@
 
 ## Um guia prático, simples e educativo para criar seu primeiro bot na Spot Testnet
 
-**Autor:** [Nome do Autor]
+**Autor:** Addo Del Grossi
 
 **Versão:** 1.0
 
 **Idioma:** Português do Brasil
+
+---
+
+## Direitos autorais
+
+Copyright © 2026 Addo Del Grossi. Todos os direitos reservados.
+
+Este livro, sua capa e seus materiais editoriais não podem ser republicados, vendidos ou distribuídos como obra própria sem autorização do autor.
+
+O código de exemplo que acompanha o livro, localizado na pasta `codigo-robo-go-binance`, é distribuído sob licença MIT para facilitar estudo, cópia e adaptação. A licença do código não altera os direitos autorais do texto do livro nem da capa.
+
+Binance, Go, Kindle, Amazon e KDP são marcas de seus respectivos titulares. Este livro é independente e não é afiliado, patrocinado ou endossado por essas empresas ou projetos.
 
 ---
 
@@ -58,6 +70,8 @@ Programar é muito menos mágico quando aceitamos que erro de terminal é parte 
 - Apêndice C: Glossário do iniciante
 - Apêndice D: Perguntas frequentes
 - Apêndice E: Referências
+- Sobre o autor
+- Encerramento
 
 ---
 
@@ -692,10 +706,12 @@ O projeto representa a decisão assim:
 
 ```go
 type Decision struct {
-    Signal    Signal
-    ShortSMA  float64
-    LongSMA   float64
-    LastClose float64
+    Signal      Signal
+    ShortSMA    float64
+    LongSMA     float64
+    PrevShortMA float64
+    PrevLongMA  float64
+    LastClose   float64
 }
 ```
 
@@ -1127,6 +1143,8 @@ Nosso fluxo:
 4. Gerar PDF para leitura de conferência.
 5. Fazer preview antes de publicar.
 
+Para a primeira publicação deste projeto, a decisão editorial é: publicar como Kindle eBook, usar EPUB direto como manuscrito principal, escolher Amazon Brasil como marketplace primário e não entrar no KDP Select no lançamento.
+
 ## Por que Markdown?
 
 Markdown é simples, limpo e fácil de versionar. Você escreve título com `#`, subtítulo com `##`, listas com `-` e código com três crases.
@@ -1185,11 +1203,23 @@ Metadados ajudam o leitor a encontrar o livro:
 - autor;
 - palavras-chave;
 - categorias;
+- marketplace primário;
+- plano de royalty;
+- inscrição ou não no KDP Select;
 - preço;
 - território;
 - declaração de IA quando aplicável.
 
-Como este manuscrito foi produzido com ajuda de IA, o checklist recomenda marcar conteúdo AI-generated no KDP se você usar este texto ou capa como base final sem reescrita humana substancial.
+Como este manuscrito e a capa foram produzidos com ajuda substancial de IA, a publicação deste pacote como está deve marcar disclosure de conteúdo AI-generated no KDP para texto e imagem de capa. Se você reescrever o texto e recriar a capa de forma substancial por conta própria, reavalie a política atual do KDP antes do upload.
+
+Para este teste, use:
+
+- marketplace primário: Amazon Brasil;
+- direitos de publicação: obra própria, não domínio público;
+- territórios: todos os territórios, se você detém esses direitos;
+- KDP Select: não inscrito no lançamento;
+- preço inicial sugerido: R$ 9,90;
+- royalty esperado no Brasil sem KDP Select: 35%.
 
 ## Descrição curta sugerida
 
@@ -1207,8 +1237,9 @@ Antes de publicar:
 - Confira capa em miniatura.
 - Revise aviso de risco.
 - Preencha metadados.
-- Marque disclosure de IA se aplicável.
-- Publique como teste com preço simples.
+- Marque disclosure de IA para texto e capa se publicar esta versão como está.
+- Não inscreva no KDP Select no primeiro lançamento.
+- Publique como teste com preço inicial sugerido de R$ 9,90.
 
 ---
 
@@ -1720,7 +1751,7 @@ Evite, a menos que você tenha certeza sobre as regras de marca. Para teste KDP,
 
 ## Preciso informar uso de IA no KDP?
 
-Se texto, imagem ou tradução forem gerados por ferramenta de IA, o KDP exige disclosure de conteúdo gerado por IA. Se você apenas usou IA como assistência e revisou/criou substancialmente o conteúdo, a política diferencia AI-assisted de AI-generated. Na dúvida, seja transparente.
+Se texto, imagem ou tradução forem gerados por ferramenta de IA, o KDP exige disclosure de conteúdo gerado por IA. Para publicar esta versão como está, marque texto e capa como conteúdo gerado por IA. Se você apenas usou IA como assistência e revisou/criou substancialmente o conteúdo, a política diferencia AI-assisted de AI-generated. Na dúvida, seja transparente.
 
 ## O livro promete resultado financeiro?
 
@@ -1761,11 +1792,17 @@ Separar partes. Configuração é uma parte. API é outra. Estratégia é outra.
 - Binance Go Connector: https://github.com/binance/binance-connector-go
 - KDP: formatos aceitos para eBooks: https://kdp.amazon.com/pt_BR/help/topic/G200634390
 - Kindle Create: https://kdp.amazon.com/en_US/help/topic/GUGQ4WDZ92F733GC
-- Diretrizes de conteúdo KDP: https://kdp.amazon.com/self-publishing/help?topicId=A2AH1EAPH0YKI9
+- Diretrizes de conteúdo KDP: https://kdp.amazon.com/en_US/help/topic/G200672390
 
 ---
 
-## Encerramento
+# Sobre o autor
+
+Addo Del Grossi é o autor deste projeto educativo. Neste livro, ele organiza um experimento pequeno e prático para estudar Go, APIs, automação, segurança básica e publicação de um ebook técnico no KDP sem prometer resultado financeiro.
+
+---
+
+# Encerramento
 
 Se você chegou até aqui, completou uma jornada que parece pequena, mas não é: você organizou um projeto Go, usou uma API real, separou configuração, escreveu uma estratégia simples, adicionou travas de segurança, rodou testes e preparou um livro para publicação.
 

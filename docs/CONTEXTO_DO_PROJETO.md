@@ -27,11 +27,11 @@ O projeto já contém:
 - Código Go em `codigo-robo-go-binance/`.
 - Script de geração em `scripts/build_artifacts.py`.
 
-O PDF de revisão tem 72 páginas. A capa foi gerada em JPG 1600x2560.
+O PDF de revisão tem 75 páginas. A capa foi gerada em JPG 1600x2560.
 
 ## Decisões importantes
 
-- Autor ainda está como placeholder: `[Nome do Autor]`.
+- Autor definido: `Addo Del Grossi`.
 - O código usa `common.SpotRestApiTestnetUrl`.
 - O projeto principal não inclui endpoint de produção da Binance.
 - A estratégia é cruzamento de médias móveis simples.
@@ -54,6 +54,7 @@ Valida:
 
 - `go test ./...` dentro de `codigo-robo-go-binance`.
 - Integridade ZIP do EPUB.
+- XML interno do EPUB.
 - Integridade ZIP do DOCX.
 - Tipo da capa e do PDF.
 
@@ -61,12 +62,13 @@ Validações observadas:
 
 - Testes Go passaram.
 - EPUB descompacta sem erro.
+- EPUB passou na validação XML local.
 - DOCX descompacta sem erro.
-- DOCX passou auditoria de acessibilidade no ambiente original.
-- PDF foi gerado com 72 páginas.
+- PDF foi gerado com 75 páginas.
 
 Limitação:
 
+- `epubcheck` não estava instalado no ambiente atual; a validação XML local foi executada.
 - O render visual automático do DOCX via LibreOffice não foi feito porque `soffice` não estava instalado no ambiente original.
 
 ## API Binance e HTTP 451
@@ -134,21 +136,21 @@ Nunca commitar `.env`.
 
 ## Antes de publicar no KDP
 
-1. Trocar `[Nome do Autor]`.
+1. Confirmar `Addo Del Grossi` como autor final em todos os artefatos.
 2. Revisar texto inteiro.
 3. Abrir EPUB no Kindle Previewer.
 4. Conferir blocos de código em tela pequena.
 5. Conferir capa em miniatura.
-6. Decidir se vai publicar EPUB direto ou importar DOCX no Kindle Create para gerar KPF.
+6. Publicar EPUB direto no primeiro lançamento.
 7. Revisar `kdp/metadados-kdp.md`.
-8. Marcar disclosure de IA no KDP se texto/capa forem usados como conteúdo gerado por IA.
+8. Marcar disclosure de IA para texto e capa se publicar esta versão como está.
+9. Não inscrever no KDP Select no primeiro lançamento.
 
 ## Próximos passos recomendados
 
-- Substituir o placeholder do autor.
 - Fazer revisão humana de linguagem e técnica.
 - Rodar o projeto em ambiente onde a Spot Testnet esteja disponível, se desejado.
-- Considerar adicionar uma licença para o código e uma nota de direitos autorais para o livro.
+- Conferir a página de direitos autorais e a licença MIT do código.
 - Criar release no GitHub com os arquivos de `dist/`.
 
 ## Prompt curto para retomar com Codex

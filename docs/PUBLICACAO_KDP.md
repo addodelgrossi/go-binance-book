@@ -2,7 +2,7 @@
 
 ## Antes do upload
 
-- Trocar `[Nome do Autor]` pelo nome real ou pseudônimo escolhido.
+- Confirmar que o autor final é `Addo Del Grossi` em manuscrito, capa, EPUB, DOCX, PDF e metadados KDP.
 - Revisar o manuscrito em `manuscrito/robo-trade-go-binance-manuscrito.md`.
 - Abrir `dist/robo-trade-go-binance.epub` no Kindle Previewer.
 - Conferir sumário, blocos de código, acentos e quebras em tela pequena.
@@ -13,13 +13,17 @@
 ## Upload sugerido
 
 - Manuscrito principal: `dist/robo-trade-go-binance.epub`.
-- Alternativa para Kindle Create: importar `dist/robo-trade-go-binance.docx` e exportar KPF.
 - Capa: `assets/capa-robo-trade-go-binance.jpg`.
 - Descrição, subtítulo e palavras-chave: `kdp/metadados-kdp.md`.
+- Marketplace primário: Amazon Brasil.
+- KDP Select: não inscrever no primeiro lançamento.
+- Preço inicial sugerido: R$ 9,90.
+- Royalty esperada no Brasil sem KDP Select: 35%.
+- Alternativa futura: importar `dist/robo-trade-go-binance.docx` no Kindle Create e exportar KPF.
 
 ## Disclosure de IA
 
-Se o texto, a capa ou partes substanciais deles forem usados como gerados por IA, marque o disclosure de conteúdo gerado por IA no KDP. Se houver reescrita, revisão humana substancial e validação técnica próprias, confira a política atual do KDP para diferenciar AI-generated de AI-assisted.
+Para publicar esta versão como está, marque disclosure de conteúdo gerado por IA para texto e capa. Se houver reescrita, revisão humana substancial e recriação própria da capa, confira a política atual do KDP para diferenciar AI-generated de AI-assisted.
 
 ## Última revisão editorial
 
@@ -27,4 +31,5 @@ Se o texto, a capa ou partes substanciais deles forem usados como gerados por IA
 - Rodar `go test ./...` dentro de `codigo-robo-go-binance`.
 - Verificar que `.env` não foi commitado.
 - Confirmar que o README do código explica HTTP 451 e Testnet.
+- Rodar `make validate` e confirmar que a validação XML do EPUB passa.
 - Fazer preview final no KDP antes de publicar.

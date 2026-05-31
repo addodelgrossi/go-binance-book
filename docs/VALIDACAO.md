@@ -26,13 +26,14 @@ Isso não invalida os testes unitários nem o valor educativo do projeto. Para e
 Validações feitas:
 
 - EPUB descompacta sem erros.
+- EPUB passou na validação XML local com `scripts/validate_epub_xml.py`.
 - DOCX descompacta sem erros.
-- PDF de revisão gerado com 72 páginas.
+- PDF de revisão gerado com 75 páginas.
 - Capa gerada em JPG 1600x2560.
-- DOCX passou auditoria de acessibilidade sem achados.
 
 Limitação conhecida:
 
+- `epubcheck` não estava instalado no ambiente atual; a validação XML local foi executada.
 - O render visual automático do DOCX via LibreOffice não foi executado porque `soffice` não estava instalado no ambiente original.
 
 ## Segurança

@@ -6,6 +6,7 @@ import shutil
 import textwrap
 import zipfile
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape as xml_escape
 
@@ -48,7 +49,8 @@ SUBTITLE = (
     "Um guia prático, simples e educativo para criar seu primeiro bot "
     "na Spot Testnet"
 )
-AUTHOR = "[Nome do Autor]"
+AUTHOR = "Addo Del Grossi"
+COPYRIGHT = "Copyright © 2026 Addo Del Grossi. Todos os direitos reservados."
 LANG = "pt-BR"
 
 
@@ -391,7 +393,8 @@ img.cover {
 
     cover_xhtml = """<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-BR">
+<html xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:epub="http://www.idpf.org/2007/ops" lang="pt-BR">
 <head><meta charset="utf-8"/><title>Capa</title>
 <link rel="stylesheet" type="text/css" href="style.css"/></head>
 <body><section epub:type="cover"><img class="cover" src="cover.jpg" alt="Capa"/></section></body>
@@ -401,7 +404,8 @@ img.cover {
     manifest_items.append(
         '<item id="cover-page" href="cover.xhtml" media-type="application/xhtml+xml"/>'
     )
-    spine_items.append('<itemref idref="cover-page"/>')
+    # KDP receives the cover JPG separately; keep cover metadata but do not
+    # place a duplicate cover page in the reading order.
 
     for idx, (title, section_blocks) in enumerate(sections, start=1):
         filename = f"section-{idx:02d}.xhtml"
@@ -456,6 +460,12 @@ img.cover {
         encoding="utf-8",
     )
 
+    modified = (
+        datetime.now(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
     (oebps / "content.opf").write_text(
         f"""<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://www.idpf.org/2007/opf"
@@ -466,6 +476,9 @@ img.cover {
  <dc:creator>{xml_escape(AUTHOR)}</dc:creator>
  <dc:language>{LANG}</dc:language>
  <dc:description>{xml_escape(SUBTITLE)}</dc:description>
+ <dc:rights>{xml_escape(COPYRIGHT)}</dc:rights>
+ <dc:publisher>{xml_escape(AUTHOR)}</dc:publisher>
+ <meta property="dcterms:modified">{modified}</meta>
  <meta name="cover" content="cover-image"/>
 </metadata>
 <manifest>
