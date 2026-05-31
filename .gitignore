@@ -1,0 +1,20 @@
+.DS_Store
+work/
+*.tmp
+*.log
+
+# Segredos locais
+.env
+*.env.local
+codigo-robo-go-binance/.env
+
+# Build/cache Go
+codigo-robo-go-binance/bin/
+codigo-robo-go-binance/coverage.out
+codigo-robo-go-binance/.cache/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
