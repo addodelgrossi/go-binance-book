@@ -1,0 +1,160 @@
+# Contexto do Projeto
+
+Este documento existe para retomar o projeto sem depender do histórico da conversa original.
+
+## Objetivo
+
+Criar um livro curto em português do Brasil para testar publicação na Amazon KDP:
+
+- Tema: robô de trade educativo com Go e Binance.
+- Público: iniciante total, estilo "para iniciantes".
+- Formato: Markdown como fonte, EPUB como entrega principal para KDP, DOCX para Kindle Create/revisão e PDF para conferência.
+- Tamanho: até 100 páginas no PDF de revisão.
+- Código: projeto Go separado, usando Binance Spot Testnet e o conector oficial da Binance para Spot em Go.
+
+O livro não deve prometer lucro, não deve recomendar investimento e não deve orientar uso com dinheiro real.
+
+## Estado atual
+
+O projeto já contém:
+
+- Manuscrito em `manuscrito/robo-trade-go-binance-manuscrito.md`.
+- EPUB em `dist/robo-trade-go-binance.epub`.
+- DOCX em `dist/robo-trade-go-binance.docx`.
+- PDF de revisão em `dist/robo-trade-go-binance-revisao.pdf`.
+- Capa em `assets/capa-robo-trade-go-binance.jpg`.
+- Metadados KDP em `kdp/metadados-kdp.md`.
+- Código Go em `codigo-robo-go-binance/`.
+- Script de geração em `scripts/build_artifacts.py`.
+
+O PDF de revisão tem 72 páginas. A capa foi gerada em JPG 1600x2560.
+
+## Decisões importantes
+
+- Autor ainda está como placeholder: `[Nome do Autor]`.
+- O código usa `common.SpotRestApiTestnetUrl`.
+- O projeto principal não inclui endpoint de produção da Binance.
+- A estratégia é cruzamento de médias móveis simples.
+- Comandos CLI do robô: `price`, `klines`, `signal`, `order-test`, `testnet-order`.
+- `order-test` valida uma ordem sem executar.
+- `testnet-order` só executa quando `BOT_ALLOW_TESTNET_ORDER=true`.
+- Variáveis principais: `BINANCE_API_KEY`, `BINANCE_API_SECRET`, `BOT_SYMBOL`, `BOT_QUANTITY`, `BOT_SHORT_WINDOW`, `BOT_LONG_WINDOW`, `BOT_ALLOW_TESTNET_ORDER`.
+- A dependência principal é `github.com/binance/binance-connector-go/clients/spot v1.8.0`.
+- O livro menciona Go 1.26.x.
+
+## Validação já feita
+
+Comando principal:
+
+```bash
+make validate
+```
+
+Valida:
+
+- `go test ./...` dentro de `codigo-robo-go-binance`.
+- Integridade ZIP do EPUB.
+- Integridade ZIP do DOCX.
+- Tipo da capa e do PDF.
+
+Validações observadas:
+
+- Testes Go passaram.
+- EPUB descompacta sem erro.
+- DOCX descompacta sem erro.
+- DOCX passou auditoria de acessibilidade no ambiente original.
+- PDF foi gerado com 72 páginas.
+
+Limitação:
+
+- O render visual automático do DOCX via LibreOffice não foi feito porque `soffice` não estava instalado no ambiente original.
+
+## API Binance e HTTP 451
+
+No ambiente original, chamadas públicas para a Binance Spot Testnet retornaram HTTP 451.
+
+Isso foi tratado no código com uma mensagem explicativa. Não tente contornar regras regionais ou termos da Binance. O projeto continua útil para estudar arquitetura, Go, testes, configuração e publicação KDP mesmo quando a API não está acessível.
+
+## Como trabalhar no livro
+
+Editar primeiro:
+
+```text
+manuscrito/robo-trade-go-binance-manuscrito.md
+```
+
+Depois regenerar:
+
+```bash
+make build
+```
+
+Ou, se o Python do sistema não tiver dependências:
+
+```bash
+/Users/addo/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/build_artifacts.py
+```
+
+Revalidar:
+
+```bash
+make validate
+```
+
+## Como trabalhar no código
+
+Entrar na pasta:
+
+```bash
+cd codigo-robo-go-binance
+```
+
+Rodar testes:
+
+```bash
+go test ./...
+```
+
+Rodar comandos públicos:
+
+```bash
+go run ./cmd/robot price
+go run ./cmd/robot klines
+go run ./cmd/robot signal
+```
+
+Comandos com ordem exigem chaves da Spot Testnet:
+
+```bash
+go run ./cmd/robot order-test BUY
+BOT_ALLOW_TESTNET_ORDER=true go run ./cmd/robot testnet-order BUY
+```
+
+Nunca commitar `.env`.
+
+## Antes de publicar no KDP
+
+1. Trocar `[Nome do Autor]`.
+2. Revisar texto inteiro.
+3. Abrir EPUB no Kindle Previewer.
+4. Conferir blocos de código em tela pequena.
+5. Conferir capa em miniatura.
+6. Decidir se vai publicar EPUB direto ou importar DOCX no Kindle Create para gerar KPF.
+7. Revisar `kdp/metadados-kdp.md`.
+8. Marcar disclosure de IA no KDP se texto/capa forem usados como conteúdo gerado por IA.
+
+## Próximos passos recomendados
+
+- Substituir o placeholder do autor.
+- Fazer revisão humana de linguagem e técnica.
+- Rodar o projeto em ambiente onde a Spot Testnet esteja disponível, se desejado.
+- Considerar adicionar uma licença para o código e uma nota de direitos autorais para o livro.
+- Criar release no GitHub com os arquivos de `dist/`.
+
+## Prompt curto para retomar com Codex
+
+Use este texto se abrir uma nova conversa:
+
+```text
+Estou no repo /Users/addo/jobs/addodelgrossi/go-binance-book. Leia README.md e docs/CONTEXTO_DO_PROJETO.md primeiro. Este repo contém um livro KDP em português sobre robô de trade educativo com Go e Binance Spot Testnet, mais um projeto Go acompanhante. Preserve o foco educativo, Testnet, sem promessa financeira e sem endpoint de produção. Antes de editar, rode git status. Para validar, use make validate.
+```

@@ -4,6 +4,17 @@ Repositório do livro **Robôs de Trade com Go e Binance para Iniciantes** e do 
 
 O livro é um guia educativo em português do Brasil para criar um robô simples usando Go, Binance Spot Testnet e uma estratégia de cruzamento de médias móveis. Ele foi pensado como um primeiro teste de publicação na Amazon KDP, sem promessa de lucro e sem operação com dinheiro real.
 
+## Retomando o projeto
+
+Se você abrir este repositório em uma nova conversa com Codex/ChatGPT ou em outro editor, comece por:
+
+1. `docs/CONTEXTO_DO_PROJETO.md`
+2. `docs/PUBLICACAO_KDP.md`
+3. `docs/VALIDACAO.md`
+4. `manuscrito/robo-trade-go-binance-manuscrito.md`
+
+O arquivo de contexto guarda as decisões principais, estado atual, limitações conhecidas e próximos passos para não depender do histórico desta conversa.
+
 ## Estrutura
 
 - `manuscrito/`: fonte principal do livro em Markdown.
@@ -12,7 +23,7 @@ O livro é um guia educativo em português do Brasil para criar um robô simples
 - `kdp/`: metadados sugeridos para cadastro no KDP.
 - `codigo-robo-go-binance/`: projeto Go do robô educativo.
 - `scripts/`: gerador local de EPUB/DOCX/PDF/capa/ZIP.
-- `docs/`: checklist de publicação e notas de validação.
+- `docs/`: contexto, checklist de publicação, validação e roadmap.
 
 ## Artefatos principais
 
