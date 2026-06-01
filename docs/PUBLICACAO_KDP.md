@@ -10,7 +10,7 @@
 - Confirmar que não há promessa de lucro ou recomendação financeira.
 - Conferir que o livro fala sempre em Spot Testnet no código principal.
 
-## Upload sugerido
+## Upload sugerido (Kindle eBook)
 
 - Manuscrito principal: `dist/robo-trade-go-binance.epub`.
 - Capa: `assets/capa-robo-trade-go-binance.jpg`.
@@ -20,6 +20,16 @@
 - Preço inicial sugerido: R$ 9,90.
 - Royalty esperada no Brasil sem KDP Select: 35%.
 - Alternativa futura: importar `dist/robo-trade-go-binance.docx` no Kindle Create e exportar KPF.
+
+## Upload sugerido (Paperback impresso)
+
+- Opções de impressão: papel branco, interior preto e branco, trim 6×9 pol.
+- Miolo: `dist/robo-trade-go-binance-print-6x9.pdf` (sem capa embutida).
+- Capa: `dist/robo-trade-go-binance-capa-print.pdf` (wraparound com lombada/sangria).
+- ISBN: usar o ISBN grátis fornecido pelo KDP (diferente do eBook).
+- Conferir no Visualizador de Impressão do KDP: margens, gutter, lombada e sangria.
+- Boa prática: gerar o template oficial no KDP Cover Calculator (trim + páginas + papel) e comparar com a capa gerada.
+- Royalty: 60% do preço de lista menos o custo de impressão (ver KDP pricing calculator).
 
 ## Disclosure de IA
 
@@ -31,5 +41,5 @@ Para publicar esta versão como está, marque disclosure de conteúdo gerado por
 - Rodar `go test ./...` dentro de `codigo-robo-go-binance`.
 - Verificar que `.env` não foi commitado.
 - Confirmar que o README do código explica HTTP 451 e Testnet.
-- Rodar `make validate` e confirmar que a validação XML do EPUB passa.
-- Fazer preview final no KDP antes de publicar.
+- Rodar `make validate` e confirmar que a validação XML do EPUB e a validação de impressão (trim, páginas, lombada) passam.
+- Fazer preview final no KDP antes de publicar (Kindle Previewer para o eBook; Visualizador de Impressão para o paperback).

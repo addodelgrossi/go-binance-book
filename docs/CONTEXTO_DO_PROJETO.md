@@ -8,8 +8,8 @@ Criar um livro curto em português do Brasil para testar publicação na Amazon 
 
 - Tema: robô de trade educativo com Go e Binance.
 - Público: iniciante total, estilo "para iniciantes".
-- Formato: Markdown como fonte, EPUB como entrega principal para KDP, DOCX para Kindle Create/revisão e PDF para conferência.
-- Tamanho: até 100 páginas no PDF de revisão.
+- Formato: Markdown como fonte; **Kindle eBook** (EPUB) e **paperback impresso** (miolo PDF 6×9 P&B + capa wraparound PDF) como entregas KDP; DOCX para Kindle Create e PDF 5×8 para revisão de tela.
+- Tamanho: ~57 páginas no miolo 6×9 (acima do mínimo de 24 do KDP).
 - Código: projeto Go separado, usando Binance Spot Testnet e o conector oficial da Binance para Spot em Go.
 
 O livro não deve prometer lucro, não deve recomendar investimento e não deve orientar uso com dinheiro real.
@@ -21,13 +21,15 @@ O projeto já contém:
 - Manuscrito em `manuscrito/robo-trade-go-binance-manuscrito.md`.
 - EPUB em `dist/robo-trade-go-binance.epub`.
 - DOCX em `dist/robo-trade-go-binance.docx`.
-- PDF de revisão em `dist/robo-trade-go-binance-revisao.pdf`.
+- PDF de revisão em `dist/robo-trade-go-binance-revisao.pdf` (5×8, com capa, só leitura de tela).
+- Miolo de impressão em `dist/robo-trade-go-binance-print-6x9.pdf` (6×9 P&B, sem capa).
+- Capa wraparound do paperback em `dist/robo-trade-go-binance-capa-print.pdf`.
 - Capa em `assets/capa-robo-trade-go-binance.jpg`.
 - Metadados KDP em `kdp/metadados-kdp.md`.
 - Código Go em `codigo-robo-go-binance/`.
-- Script de geração em `scripts/build_artifacts.py`.
+- Script de geração em `scripts/build_artifacts.py` e specs de impressão em `scripts/print_specs.py`.
 
-O PDF de revisão tem 75 páginas. A capa foi gerada em JPG 1600x2560.
+O PDF de revisão tem 75 páginas (5×8). O miolo de impressão tem 57 páginas (6×9); a lombada calculada (papel branco) é ~0,128", abaixo de 100 páginas, então a lombada fica lisa. A capa Kindle é JPG 1600x2560 e a capa wraparound tem ~12,38×9,25".
 
 ## Decisões importantes
 
@@ -57,6 +59,8 @@ Valida:
 - XML interno do EPUB.
 - Integridade ZIP do DOCX.
 - Tipo da capa e do PDF.
+- Testes das specs de impressão (`scripts/test_print_specs.py`).
+- Conformidade dos artefatos de impressão: trim do miolo (6×9), contagem mínima de páginas e dimensão da capa vs fórmula da lombada (`scripts/validate_print.py`).
 
 Validações observadas:
 

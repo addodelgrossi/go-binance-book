@@ -1,6 +1,10 @@
 # Roadmap
 
-Ideias para versões futuras do livro e do código:
+## Concluído
+
+- Publicação impressa (paperback): miolo 6×9 P&B (`dist/robo-trade-go-binance-print-6x9.pdf`) e capa wraparound (`dist/robo-trade-go-binance-capa-print.pdf`) gerados por `make build` e conferidos por `make validate`.
+
+## Ideias para versões futuras do livro e do código
 
 - Revisar tecnicamente cada trecho antes da publicação final.
 - Adicionar screenshots próprios do terminal, se desejar enriquecer a edição.

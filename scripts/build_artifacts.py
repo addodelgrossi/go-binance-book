@@ -17,20 +17,26 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
 from reportlab.lib.pagesizes import inch
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch as rl_inch
 from reportlab.platypus import (
+    BaseDocTemplate,
+    Flowable,
+    Frame,
     Image as PdfImage,
     ListFlowable,
     ListItem,
     PageBreak,
+    PageTemplate,
     Paragraph,
     Preformatted,
     SimpleDocTemplate,
     Spacer,
 )
+
+from print_specs import BLEED, MIN_PAGES, TRIM_6X9, full_wrap_size, spine_width
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,8 +47,12 @@ COVER = ROOT / "assets" / "capa-robo-trade-go-binance.jpg"
 EPUB = OUT / "robo-trade-go-binance.epub"
 DOCX = OUT / "robo-trade-go-binance.docx"
 PDF = OUT / "robo-trade-go-binance-revisao.pdf"
+PRINT_PDF = OUT / "robo-trade-go-binance-print-6x9.pdf"
+PRINT_COVER = OUT / "robo-trade-go-binance-capa-print.pdf"
 CODE_DIR = ROOT / "codigo-robo-go-binance"
 CODE_ZIP = OUT / "codigo-robo-go-binance.zip"
+
+PRINT_PAPER = "white"
 
 TITLE = "Robôs de Trade com Go e Binance para Iniciantes"
 SUBTITLE = (
@@ -52,6 +62,18 @@ SUBTITLE = (
 AUTHOR = "Addo Del Grossi"
 COPYRIGHT = "Copyright © 2026 Addo Del Grossi. Todos os direitos reservados."
 LANG = "pt-BR"
+BACK_BLURB = (
+    "Aprenda, passo a passo, a criar um robô educativo de trade com Go e a "
+    "Binance Spot Testnet. Você vai instalar o Go, configurar variáveis de "
+    "ambiente, buscar preços, ler velas, calcular médias móveis e validar "
+    "ordens com segurança — sem operar dinheiro real.\n\n"
+    "Um guia direto para iniciantes que querem entender APIs, robôs e o "
+    "empacotamento de um livro técnico simples para a Amazon KDP."
+)
+BACK_DISCLAIMER = (
+    "Material educativo. Não é recomendação financeira nem promessa de lucro. "
+    "O projeto usa a Binance Spot Testnet."
+)
 
 
 @dataclass
@@ -717,6 +739,207 @@ def make_pdf(blocks: list[Block]) -> None:
     doc.build(story, onFirstPage=footer, onLaterPages=footer)
 
 
+def make_print_pdf(blocks: list[Block]) -> int:
+    """Miolo de impressão 6x9 P&B, margens espelhadas, sem capa. Retorna páginas."""
+    width, height = TRIM_6X9[0] * inch, TRIM_6X9[1] * inch
+    inside, outside, top_bottom = 0.625 * inch, 0.5 * inch, 0.6 * inch
+    frame_w = width - inside - outside
+    frame_h = height - 2 * top_bottom
+    recto = Frame(inside, top_bottom, frame_w, frame_h, id="recto")  # gutter à esq.
+    verso = Frame(outside, top_bottom, frame_w, frame_h, id="verso")  # gutter à dir.
+
+    def footer(canvas, doc_obj):
+        start = getattr(doc_obj, "_body_start", None)
+        if start and canvas.getPageNumber() >= start:
+            canvas.saveState()
+            canvas.setFont("Helvetica", 8)
+            canvas.setFillColor(colors.HexColor("#444444"))
+            canvas.drawCentredString(width / 2, 0.32 * inch, str(canvas.getPageNumber()))
+            canvas.restoreState()
+
+    class MirrorDoc(BaseDocTemplate):
+        def handle_pageBegin(self):
+            self._handle_pageBegin()
+            self.handle_nextPageTemplate("verso" if self.page % 2 else "recto")
+
+    doc = MirrorDoc(
+        str(PRINT_PDF), pagesize=(width, height), title=TITLE, author=AUTHOR
+    )
+    doc.addPageTemplates(
+        [
+            PageTemplate(id="recto", frames=[recto], onPage=footer),
+            PageTemplate(id="verso", frames=[verso], onPage=footer),
+        ]
+    )
+
+    class BodyStart(Flowable):
+        def wrap(self, *_):
+            return (0, 0)
+
+        def draw(self):
+            if not getattr(doc, "_body_start", None):
+                doc._body_start = doc.page
+
+    body = ParagraphStyle(
+        "PrintBody", fontName="Times-Roman", fontSize=10.5, leading=14.5,
+        spaceAfter=6, alignment=TA_JUSTIFY,
+    )
+    h1 = ParagraphStyle(
+        "PrintH1", fontName="Helvetica-Bold", fontSize=17, leading=21,
+        textColor=colors.black, spaceBefore=18, spaceAfter=14,
+    )
+    h2 = ParagraphStyle(
+        "PrintH2", fontName="Helvetica-Bold", fontSize=12.5, leading=16,
+        textColor=colors.HexColor("#1A1A1A"), spaceBefore=9, spaceAfter=6,
+    )
+    h3 = ParagraphStyle(
+        "PrintH3", fontName="Helvetica-Bold", fontSize=11, leading=14,
+        textColor=colors.HexColor("#333333"), spaceBefore=6, spaceAfter=4,
+    )
+    code = ParagraphStyle(
+        "PrintCode", fontName="Courier", fontSize=8, leading=10.8,
+        backColor=colors.HexColor("#F0F0F0"), borderColor=colors.HexColor("#CCCCCC"),
+        borderWidth=0.4, borderPadding=5, spaceAfter=8,
+    )
+    quote = ParagraphStyle(
+        "PrintQuote", parent=body, leftIndent=14, fontName="Times-Italic",
+        textColor=colors.HexColor("#333333"),
+    )
+    center = ParagraphStyle("PrintCenter", parent=body, alignment=TA_CENTER)
+
+    story: list = []
+    h1_count = 0
+    body_started = False
+    for block in blocks:
+        if block.kind == "heading":
+            if block.level == 1:
+                h1_count += 1
+                if h1_count >= 2:  # segundo h1 = início dos capítulos (corpo)
+                    story.append(PageBreak())
+                    if not body_started:
+                        story.append(BodyStart())
+                        body_started = True
+                story.append(Paragraph(inline_html(block.text), h1))
+            elif block.level == 2:
+                story.append(Paragraph(inline_html(block.text), h2))
+            else:
+                story.append(Paragraph(inline_html(block.text), h3))
+        elif block.kind == "paragraph":
+            story.append(Paragraph(inline_html(block.text), body))
+        elif block.kind == "quote":
+            story.append(Paragraph(inline_html(block.text), quote))
+        elif block.kind == "code":
+            wrapped = []
+            for line in block.text.splitlines():
+                wrapped.extend(textwrap.wrap(line, width=70) or [""])
+            story.append(Preformatted("\n".join(wrapped), code))
+        elif block.kind in {"ul", "ol"}:
+            items = [
+                ListItem(Paragraph(inline_html(item), body), leftIndent=12)
+                for item in (block.items or [])
+            ]
+            story.append(
+                ListFlowable(
+                    items,
+                    bulletType="bullet" if block.kind == "ul" else "1",
+                    start="circle" if block.kind == "ul" else "1",
+                    leftIndent=18,
+                )
+            )
+            story.append(Spacer(1, 3))
+        elif block.kind == "hr":
+            if body_started:
+                story.append(Spacer(1, 10))
+                story.append(Paragraph("* * *", center))
+                story.append(Spacer(1, 10))
+            else:
+                story.append(PageBreak())  # separa páginas do front matter
+
+    doc.build(story)
+    return doc.page
+
+
+def _wrap_by_width(text, font, max_w):
+    lines = []
+    for para in text.split("\n"):
+        if not para.strip():
+            lines.append("")
+            continue
+        words, cur = para.split(), ""
+        for w in words:
+            trial = f"{cur} {w}".strip()
+            if font.getlength(trial) <= max_w:
+                cur = trial
+            else:
+                lines.append(cur)
+                cur = w
+        lines.append(cur)
+    return lines
+
+
+def make_print_cover(pages: int) -> None:
+    """Capa wraparound (contracapa + lombada + frente) dimensionada pela lombada."""
+    spine = spine_width(pages, PRINT_PAPER)
+    wrap_w_in, wrap_h_in = full_wrap_size(*TRIM_6X9, spine)
+    dpi = 300
+    pw, ph = round(wrap_w_in * dpi), round(wrap_h_in * dpi)
+    bleed_px = round(BLEED * dpi)
+    trim_w_px = round(TRIM_6X9[0] * dpi)
+    spine_px = round(spine * dpi)
+    safe = round(0.375 * dpi)  # bleed + 0,25" de margem segura
+    back_x0 = bleed_px
+    spine_x0 = back_x0 + trim_w_px
+    front_x0 = spine_x0 + spine_px
+
+    canvas = Image.new("RGB", (pw, ph), "#071B24")
+    draw = ImageDraw.Draw(canvas)
+
+    # Frente: reaproveita a arte da capa Kindle, cover-fit no painel frontal
+    art = Image.open(COVER).convert("RGB")
+    front_w, front_h = pw - front_x0, ph
+    scale = max(front_w / art.width, front_h / art.height)
+    art = art.resize((round(art.width * scale), round(art.height * scale)), Image.LANCZOS)
+    left, top = (art.width - front_w) // 2, (art.height - front_h) // 2
+    canvas.paste(art.crop((left, top, left + front_w, top + front_h)), (front_x0, 0))
+
+    # Lombada: lisa (livro fino, < 100 páginas)
+    draw.rectangle([spine_x0, 0, front_x0, ph], fill="#0B3B4A")
+
+    font_regular = "/System/Library/Fonts/Supplemental/Arial.ttf"
+    font_bold = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+    title_font = ImageFont.truetype(font_bold, 52)
+    blurb_font = ImageFont.truetype(font_regular, 30)
+    small_font = ImageFont.truetype(font_regular, 24)
+
+    # Contracapa: título + blurb + aviso + espaço reservado para código de barras
+    bx = back_x0 + safe
+    bw = spine_x0 - safe - bx
+    y = bleed_px + safe
+    for line in _wrap_by_width(TITLE, title_font, bw):
+        draw.text((bx, y), line, fill="#F0B84A", font=title_font)
+        y += 62
+    y += 30
+    for line in _wrap_by_width(BACK_BLURB, blurb_font, bw):
+        draw.text((bx, y), line, fill="#E8F2F4", font=blurb_font)
+        y += 40
+    for line in _wrap_by_width(BACK_DISCLAIMER, small_font, bw):
+        draw.text((bx, y + 20), line, fill="#9FB6BD", font=small_font)
+        y += 32
+
+    # Caixa branca reservada ao código de barras/ISBN gerado pelo KDP
+    box_w, box_h = round(2 * dpi), round(1.2 * dpi)
+    box_r, box_b = spine_x0 - safe, ph - bleed_px - safe
+    draw.rectangle([box_r - box_w, box_b - box_h, box_r, box_b], fill="#FFFFFF")
+    draw.text(
+        (box_r - box_w + 14, box_b - box_h + 14),
+        "Código de barras / ISBN\n(gerado pelo KDP)",
+        fill="#444444",
+        font=small_font,
+    )
+
+    canvas.save(PRINT_COVER, "PDF", resolution=dpi)
+
+
 def make_code_zip() -> None:
     if CODE_ZIP.exists():
         CODE_ZIP.unlink()
@@ -731,12 +954,16 @@ def main() -> None:
     make_epub(blocks)
     make_docx(blocks)
     make_pdf(blocks)
+    print_pages = make_print_pdf(blocks)  # miolo antes da capa (define a lombada)
+    make_print_cover(print_pages)
     make_code_zip()
-    print(f"cover: {COVER}")
-    print(f"epub:  {EPUB}")
-    print(f"docx:  {DOCX}")
-    print(f"pdf:   {PDF}")
-    print(f"zip:   {CODE_ZIP}")
+    print(f"cover:       {COVER}")
+    print(f"epub:        {EPUB}")
+    print(f"docx:        {DOCX}")
+    print(f"pdf (revisão): {PDF}")
+    print(f"print miolo:   {PRINT_PDF} ({print_pages} páginas)")
+    print(f"print capa:    {PRINT_COVER}")
+    print(f"zip:         {CODE_ZIP}")
 
 
 if __name__ == "__main__":
