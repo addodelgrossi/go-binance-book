@@ -10,14 +10,18 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+from PIL import Image
 from pypdf import PdfReader
 
 from print_specs import BLEED, MIN_PAGES, PAPER_THICKNESS, TRIM_6X9, full_wrap_size
 
 ROOT = Path(__file__).resolve().parents[1]
+COVER = ROOT / "assets" / "capa-robo-trade-go-binance.jpg"
 PRINT_PDF = ROOT / "dist" / "robo-trade-go-binance-print-6x9.pdf"
 PRINT_COVER = ROOT / "dist" / "robo-trade-go-binance-capa-print.pdf"
 PAPER = "white"
+EBOOK_COVER_SIZE = (1600, 2560)
+MAX_COVER_BYTES = 50 * 1024 * 1024
 TOL_IN = 0.02  # tolerância de arredondamento de pixel (≈ 6px a 300 DPI)
 
 
@@ -29,6 +33,25 @@ def _size_in(pdf: Path) -> tuple[float, float, int]:
 
 def main() -> int:
     errors: list[str] = []
+
+    if COVER.exists():
+        with Image.open(COVER) as image:
+            print(
+                "capa Kindle: "
+                f"{image.width}x{image.height} px, modo {image.mode}, "
+                f"{COVER.stat().st_size / (1024 * 1024):.2f} MB"
+            )
+            if image.size != EBOOK_COVER_SIZE:
+                errors.append(
+                    f"capa Kindle != {EBOOK_COVER_SIZE[0]}x{EBOOK_COVER_SIZE[1]} px "
+                    f"(obtido {image.width}x{image.height})"
+                )
+            if image.mode != "RGB":
+                errors.append(f"capa Kindle deve estar em RGB (modo obtido {image.mode})")
+            if COVER.stat().st_size > MAX_COVER_BYTES:
+                errors.append("capa Kindle excede 50 MB")
+    else:
+        errors.append(f"capa Kindle ausente: {COVER}")
 
     miolo_w, miolo_h, pages = _size_in(PRINT_PDF)
     print(f"miolo: {miolo_w:.3f}x{miolo_h:.3f} in, {pages} páginas")

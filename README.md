@@ -19,7 +19,7 @@ O arquivo de contexto guarda as decisões principais, estado atual, limitações
 
 - `manuscrito/`: fonte principal do livro em Markdown.
 - `dist/`: artefatos finais para revisão/publicação: EPUB, DOCX, PDFs e ZIP do código.
-- `assets/`: capa do Kindle em JPG 1600x2560.
+- `assets/`: capa do Kindle em JPG 1600x2560 e tema configurável da capa.
 - `kdp/`: metadados sugeridos para cadastro no KDP.
 - `codigo-robo-go-binance/`: projeto Go do robô educativo.
 - `scripts/`: gerador local de EPUB/DOCX/PDFs/capas/ZIP.
@@ -72,7 +72,7 @@ Tudo que existe no projeto e onde cada arquivo entra no KDP. O ZIP do código **
 - **Capa vs thumbnail**: você só envia a **capa**. O *thumbnail* (miniatura na loja) é gerado automaticamente pela Amazon a partir da capa. Não existe upload separado de thumbnail.
 - **Capa do eBook ≠ capa do impresso**: o eBook usa só a frente (JPG 1.6:1). O paperback exige uma capa **wraparound** (contracapa + lombada + frente) em PDF, com sangria e lombada dependente do número de páginas.
 - **ISBN**: o **Kindle eBook não precisa de ISBN**. O **paperback** recebe um ISBN grátis do KDP (ou você fornece o seu). O ISBN do eBook e do impresso são diferentes.
-- **Lombada**: a largura da lombada = páginas × 0,002252" (papel branco). Livros finos (abaixo de ~100 páginas) podem não comportar texto na lombada; nesse caso ela fica lisa.
+- **Lombada**: a largura da lombada = páginas × 0,002252" (papel branco). Livros finos (abaixo de 80 páginas) não comportam texto na lombada; nesse caso ela fica lisa.
 - **Sangria (bleed)**: o miolo é só texto, então **não usa sangria**. A **capa impressa usa sangria de 0,125"** em todas as bordas.
 - **Royalties**: eBook sem KDP Select no Brasil = 35%. Paperback = 60% do preço de lista **menos o custo de impressão** (que depende de páginas/papel). Use o KDP pricing calculator para simular.
 - **Disclosure de IA**: para publicar esta versão como está, marque conteúdo gerado por IA para texto e capa. Se houver revisão humana substancial e recriação própria da capa, reveja a política vigente do KDP (AI-generated vs AI-assisted).
@@ -114,6 +114,9 @@ Se a API devolver HTTP 451, respeite as regras locais e os termos da Binance. O 
 ## Regerar os artefatos do livro
 
 O gerador usa Python com `Pillow`, `python-docx`, `reportlab` e `pypdf`.
+Os ajustes visuais da capa ficam em `assets/cover/cover_theme.json`; título, subtítulo,
+autor e texto de contracapa continuam centralizados no gerador para não divergirem dos
+metadados KDP.
 
 ```bash
 make build

@@ -1,0 +1,41 @@
+{
+  "palette": {
+    "background_top": "#08262D",
+    "background_bottom": "#123E47",
+    "panel": "#092C34",
+    "panel_border": "#2E6870",
+    "grid": "#2C5961",
+    "text": "#F7FBFC",
+    "muted_text": "#D8EEF0",
+    "quiet_text": "#9FB6BD",
+    "accent": "#E9B44C",
+    "positive": "#45D6C8",
+    "negative": "#E96A6A",
+    "shadow": "#031014",
+    "spine": "#0B333B"
+  },
+  "fonts": {
+    "regular": "/System/Library/Fonts/Supplemental/Arial.ttf",
+    "bold": "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+  },
+  "front": {
+    "width": 1600,
+    "height": 2560,
+    "margin": 120,
+    "eyebrow": "GUIA PR\u00c1TICO",
+    "title_badge": "para Iniciantes",
+    "footer_badges": ["Spot Testnet", "Go 1.26", "Guia pr\u00e1tico"],
+    "title_max_width": 900,
+    "title_font_size": 136,
+    "subtitle_font_size": 45,
+    "author_font_size": 44
+  },
+  "print": {
+    "dpi": 300,
+    "safe_margin_in": 0.375,
+    "barcode_width_in": 2.0,
+    "barcode_height_in": 1.2,
+    "back_eyebrow": "GUIA PR\u00c1TICO",
+    "barcode_label": "Codigo de barras / ISBN\n(gerado pelo KDP)"
+  }
+}

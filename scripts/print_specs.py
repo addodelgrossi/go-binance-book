@@ -16,7 +16,7 @@ PAPER_THICKNESS = {
 BLEED = 0.125  # polegadas, em cada borda da capa
 TRIM_6X9 = (6.0, 9.0)  # polegadas (largura, altura)
 MIN_PAGES = 24  # mínimo do KDP para paperback
-SPINE_TEXT_MIN_PAGES = 100  # abaixo disso, manter lombada lisa
+SPINE_TEXT_MIN_PAGES = 80  # abaixo disso, manter lombada lisa
 
 
 def spine_width(pages: int, paper: str = "white") -> float:

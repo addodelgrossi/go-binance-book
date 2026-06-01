@@ -4,6 +4,7 @@ import unittest
 
 from print_specs import (
     BLEED,
+    SPINE_TEXT_MIN_PAGES,
     TRIM_6X9,
     full_wrap_size,
     gutter_for,
@@ -33,6 +34,9 @@ class PrintSpecsTest(unittest.TestCase):
         self.assertEqual(gutter_for(120), 0.375)
         self.assertEqual(gutter_for(200), 0.5)
         self.assertEqual(gutter_for(400), 0.625)
+
+    def test_spine_text_threshold(self):
+        self.assertEqual(SPINE_TEXT_MIN_PAGES, 80)
 
 
 if __name__ == "__main__":

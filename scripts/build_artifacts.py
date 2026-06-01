@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape as xml_escape
 
-from PIL import Image, ImageDraw, ImageFont
+from cover_art import CoverMetadata, build_ebook_cover, build_print_cover
 from docx import Document
 from docx.enum.text import WD_BREAK
 from docx.oxml import OxmlElement
@@ -36,7 +36,7 @@ from reportlab.platypus import (
     Spacer,
 )
 
-from print_specs import BLEED, MIN_PAGES, TRIM_6X9, full_wrap_size, spine_width
+from print_specs import TRIM_6X9
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,6 +44,7 @@ OUT = ROOT / "dist"
 WORK = ROOT / "work"
 MD = ROOT / "manuscrito" / "robo-trade-go-binance-manuscrito.md"
 COVER = ROOT / "assets" / "capa-robo-trade-go-binance.jpg"
+COVER_THEME = ROOT / "assets" / "cover" / "cover_theme.json"
 EPUB = OUT / "robo-trade-go-binance.epub"
 DOCX = OUT / "robo-trade-go-binance.docx"
 PDF = OUT / "robo-trade-go-binance-revisao.pdf"
@@ -74,6 +75,31 @@ BACK_DISCLAIMER = (
     "Material educativo. Não é recomendação financeira nem promessa de lucro. "
     "O projeto usa a Binance Spot Testnet."
 )
+
+
+def _cover_metadata() -> CoverMetadata:
+    return CoverMetadata(
+        title=TITLE,
+        subtitle=SUBTITLE,
+        author=AUTHOR,
+        back_blurb=BACK_BLURB,
+        back_disclaimer=BACK_DISCLAIMER,
+    )
+
+
+def make_cover() -> None:
+    build_ebook_cover(COVER, _cover_metadata(), COVER_THEME)
+
+
+def make_print_cover(pages: int) -> None:
+    build_print_cover(
+        PRINT_COVER,
+        COVER,
+        pages,
+        PRINT_PAPER,
+        _cover_metadata(),
+        COVER_THEME,
+    )
 
 
 @dataclass
@@ -207,77 +233,6 @@ def plain_inline(text: str) -> str:
     value = re.sub(r"`([^`]+)`", r"\1", text)
     value = re.sub(r"\*\*([^*]+)\*\*", r"\1", value)
     return value
-
-
-def make_cover() -> None:
-    width, height = 1600, 2560
-    img = Image.new("RGB", (width, height), "#071B24")
-    draw = ImageDraw.Draw(img)
-
-    for y in range(height):
-        t = y / height
-        r = int(7 + 10 * t)
-        g = int(27 + 34 * t)
-        b = int(36 + 32 * t)
-        draw.line([(0, y), (width, y)], fill=(r, g, b))
-
-    grid = (53, 97, 107)
-    for x in range(120, width, 120):
-        draw.line([(x, 260), (x, height - 360)], fill=grid, width=1)
-    for y in range(320, height - 360, 120):
-        draw.line([(120, y), (width - 120, y)], fill=grid, width=1)
-
-    gold = "#F0B84A"
-    teal = "#49D6C8"
-    red = "#E66B6B"
-    candles = [
-        (260, 1290, 1120, 1460, True),
-        (370, 1170, 1080, 1330, True),
-        (480, 1220, 1140, 1410, False),
-        (590, 1100, 1020, 1280, True),
-        (700, 980, 900, 1160, True),
-        (810, 1050, 970, 1220, False),
-        (920, 910, 820, 1080, True),
-        (1030, 860, 790, 1010, True),
-        (1140, 930, 860, 1110, False),
-        (1250, 780, 710, 960, True),
-    ]
-    for x, top, open_y, close_y, up in candles:
-        color = teal if up else red
-        draw.line([(x, top), (x, close_y + 100)], fill=color, width=8)
-        y1, y2 = sorted([open_y, close_y])
-        draw.rounded_rectangle(
-            [x - 28, y1, x + 28, y2],
-            radius=10,
-            fill=color,
-        )
-
-    font_regular = "/System/Library/Fonts/Supplemental/Arial.ttf"
-    font_bold = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
-    title_font = ImageFont.truetype(font_bold, 122)
-    subtitle_font = ImageFont.truetype(font_regular, 48)
-    small_font = ImageFont.truetype(font_regular, 36)
-    author_font = ImageFont.truetype(font_bold, 42)
-
-    draw.text((120, 180), "GUIA PRÁTICO", fill=gold, font=small_font)
-
-    y = 360
-    for line in ["Robôs de", "Trade com", "Go e Binance"]:
-        draw.text((120, y), line, fill="#F7FBFC", font=title_font)
-        y += 142
-
-    draw.line([(120, y + 20), (710, y + 20)], fill=gold, width=8)
-
-    subtitle_lines = textwrap.wrap(SUBTITLE, width=36)
-    y = 1780
-    for line in subtitle_lines:
-        draw.text((120, y), line, fill="#D8EEF0", font=subtitle_font)
-        y += 64
-
-    draw.text((120, 2290), AUTHOR, fill="#F7FBFC", font=author_font)
-    draw.text((120, 2354), "Spot Testnet • Go 1.26 • KDP", fill=gold, font=small_font)
-
-    img.save(COVER, "JPEG", quality=94, optimize=True)
 
 
 def blocks_to_xhtml(blocks: list[Block], section_title: str) -> str:
@@ -857,87 +812,6 @@ def make_print_pdf(blocks: list[Block]) -> int:
 
     doc.build(story)
     return doc.page
-
-
-def _wrap_by_width(text, font, max_w):
-    lines = []
-    for para in text.split("\n"):
-        if not para.strip():
-            lines.append("")
-            continue
-        words, cur = para.split(), ""
-        for w in words:
-            trial = f"{cur} {w}".strip()
-            if font.getlength(trial) <= max_w:
-                cur = trial
-            else:
-                lines.append(cur)
-                cur = w
-        lines.append(cur)
-    return lines
-
-
-def make_print_cover(pages: int) -> None:
-    """Capa wraparound (contracapa + lombada + frente) dimensionada pela lombada."""
-    spine = spine_width(pages, PRINT_PAPER)
-    wrap_w_in, wrap_h_in = full_wrap_size(*TRIM_6X9, spine)
-    dpi = 300
-    pw, ph = round(wrap_w_in * dpi), round(wrap_h_in * dpi)
-    bleed_px = round(BLEED * dpi)
-    trim_w_px = round(TRIM_6X9[0] * dpi)
-    spine_px = round(spine * dpi)
-    safe = round(0.375 * dpi)  # bleed + 0,25" de margem segura
-    back_x0 = bleed_px
-    spine_x0 = back_x0 + trim_w_px
-    front_x0 = spine_x0 + spine_px
-
-    canvas = Image.new("RGB", (pw, ph), "#071B24")
-    draw = ImageDraw.Draw(canvas)
-
-    # Frente: reaproveita a arte da capa Kindle, cover-fit no painel frontal
-    art = Image.open(COVER).convert("RGB")
-    front_w, front_h = pw - front_x0, ph
-    scale = max(front_w / art.width, front_h / art.height)
-    art = art.resize((round(art.width * scale), round(art.height * scale)), Image.LANCZOS)
-    left, top = (art.width - front_w) // 2, (art.height - front_h) // 2
-    canvas.paste(art.crop((left, top, left + front_w, top + front_h)), (front_x0, 0))
-
-    # Lombada: lisa (livro fino, < 100 páginas)
-    draw.rectangle([spine_x0, 0, front_x0, ph], fill="#0B3B4A")
-
-    font_regular = "/System/Library/Fonts/Supplemental/Arial.ttf"
-    font_bold = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
-    title_font = ImageFont.truetype(font_bold, 52)
-    blurb_font = ImageFont.truetype(font_regular, 30)
-    small_font = ImageFont.truetype(font_regular, 24)
-
-    # Contracapa: título + blurb + aviso + espaço reservado para código de barras
-    bx = back_x0 + safe
-    bw = spine_x0 - safe - bx
-    y = bleed_px + safe
-    for line in _wrap_by_width(TITLE, title_font, bw):
-        draw.text((bx, y), line, fill="#F0B84A", font=title_font)
-        y += 62
-    y += 30
-    for line in _wrap_by_width(BACK_BLURB, blurb_font, bw):
-        draw.text((bx, y), line, fill="#E8F2F4", font=blurb_font)
-        y += 40
-    for line in _wrap_by_width(BACK_DISCLAIMER, small_font, bw):
-        draw.text((bx, y + 20), line, fill="#9FB6BD", font=small_font)
-        y += 32
-
-    # Caixa branca reservada ao código de barras/ISBN gerado pelo KDP
-    box_w, box_h = round(2 * dpi), round(1.2 * dpi)
-    box_r, box_b = spine_x0 - safe, ph - bleed_px - safe
-    draw.rectangle([box_r - box_w, box_b - box_h, box_r, box_b], fill="#FFFFFF")
-    draw.text(
-        (box_r - box_w + 14, box_b - box_h + 14),
-        "Código de barras / ISBN\n(gerado pelo KDP)",
-        fill="#444444",
-        font=small_font,
-    )
-
-    canvas.save(PRINT_COVER, "PDF", resolution=dpi)
 
 
 def make_code_zip() -> None:

@@ -32,7 +32,7 @@ Validações feitas:
 - Miolo de impressão gerado com trim 6×9 (432×648 pt) e 57 páginas.
 - Capa wraparound com dimensão conferida pela fórmula da lombada (~12,38×9,25").
 - Testes das specs de impressão passam (`scripts/test_print_specs.py`).
-- Capa Kindle gerada em JPG 1600x2560.
+- Capa Kindle gerada em JPG 1600x2560, RGB e abaixo de 50 MB.
 
 Limitação conhecida:
 

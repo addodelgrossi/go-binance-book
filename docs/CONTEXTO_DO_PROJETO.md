@@ -24,12 +24,12 @@ O projeto já contém:
 - PDF de revisão em `dist/robo-trade-go-binance-revisao.pdf` (5×8, com capa, só leitura de tela).
 - Miolo de impressão em `dist/robo-trade-go-binance-print-6x9.pdf` (6×9 P&B, sem capa).
 - Capa wraparound do paperback em `dist/robo-trade-go-binance-capa-print.pdf`.
-- Capa em `assets/capa-robo-trade-go-binance.jpg`.
+- Capa em `assets/capa-robo-trade-go-binance.jpg`, com tema visual configurável em `assets/cover/cover_theme.json`.
 - Metadados KDP em `kdp/metadados-kdp.md`.
 - Código Go em `codigo-robo-go-binance/`.
 - Script de geração em `scripts/build_artifacts.py` e specs de impressão em `scripts/print_specs.py`.
 
-O PDF de revisão tem 75 páginas (5×8). O miolo de impressão tem 57 páginas (6×9); a lombada calculada (papel branco) é ~0,128", abaixo de 100 páginas, então a lombada fica lisa. A capa Kindle é JPG 1600x2560 e a capa wraparound tem ~12,38×9,25".
+O PDF de revisão tem 75 páginas (5×8). O miolo de impressão tem 57 páginas (6×9); a lombada calculada (papel branco) é ~0,128", abaixo de 80 páginas, então a lombada fica lisa. A capa Kindle é JPG 1600x2560 e a capa wraparound tem ~12,38×9,25".
 
 ## Decisões importantes
 
